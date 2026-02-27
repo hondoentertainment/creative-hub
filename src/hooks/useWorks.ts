@@ -39,5 +39,24 @@ export function useWorks() {
     return false;
   }, []);
 
-  return { works, add, update, remove, refresh };
+  const restore = useCallback((work: CreativeWork) => {
+    store.restoreWork(work);
+    setWorks((prev) => [...prev, work]);
+  }, []);
+
+  const addMany = useCallback(
+    (items: Omit<CreativeWork, "id" | "createdAt">[]) => {
+      const created = store.addManyWorks(items);
+      setWorks((prev) => [...prev, ...created]);
+      return created;
+    },
+    []
+  );
+
+  const replaceAll = useCallback((newWorks: CreativeWork[]) => {
+    store.replaceAllWorks(newWorks);
+    setWorks(newWorks);
+  }, []);
+
+  return { works, add, addMany, update, remove, restore, replaceAll, refresh };
 }

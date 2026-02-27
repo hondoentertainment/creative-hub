@@ -3,9 +3,9 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
-// base: repo name for GitHub Pages (e.g. /creative-hub/). Use '/' for user/org sites.
+// base: '/' on Vercel (root); '/creative-hub/' on GitHub Pages
 export default defineConfig({
-  base: "/creative-hub/",
+  base: process.env.VERCEL ? "/" : "/creative-hub/",
   plugins: [
     react(),
     VitePWA({
@@ -20,15 +20,16 @@ export default defineConfig({
         theme_color: '#e07c4c',
         background_color: '#0f0e0d',
         display: 'standalone',
-        start_url: '/creative-hub/',
+        start_url: process.env.VERCEL ? '/' : '/creative-hub/',
         icons: [
           {
-            src: '/vite.svg',
+            src: (process.env.VERCEL ? '/' : '/creative-hub/') + 'icon.svg',
             sizes: '192x192',
             type: 'image/svg+xml',
+            purpose: 'any',
           },
           {
-            src: '/vite.svg',
+            src: (process.env.VERCEL ? '/' : '/creative-hub/') + 'icon.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
             purpose: 'any maskable',

@@ -1,11 +1,21 @@
 import { useState, useEffect } from "react";
 import type { CreativeWork, WorkType } from "../types";
 import { WORK_TYPES } from "../types";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 
 interface WorkFormProps {
   work?: CreativeWork | null;
   onSubmit: (data: Omit<CreativeWork, "id" | "createdAt">) => void;
   onCancel: () => void;
+}
+
+function isValidUrl(s: string): boolean {
+  try {
+    new URL(s.trim());
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function WorkForm({ work, onSubmit, onCancel }: WorkFormProps) {
@@ -46,6 +56,9 @@ export function WorkForm({ work, onSubmit, onCancel }: WorkFormProps) {
     ) {
       next.driveUrl = "Please enter a valid Google Drive or Docs URL";
     }
+    if (thumbnailUrl.trim() && !isValidUrl(thumbnailUrl)) {
+      next.thumbnailUrl = "Please enter a valid URL";
+    }
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -66,6 +79,8 @@ export function WorkForm({ work, onSubmit, onCancel }: WorkFormProps) {
     if (e.target === e.currentTarget) onCancel();
   };
 
+  const formRef = useFocusTrap<HTMLFormElement>(true);
+
   return (
     <div
       className="form-overlay"
@@ -74,7 +89,7 @@ export function WorkForm({ work, onSubmit, onCancel }: WorkFormProps) {
       aria-labelledby="form-title"
       onClick={handleBackdropClick}
     >
-      <form className="work-form" onSubmit={handleSubmit} onClick={(e) => e.stopPropagation()}>
+      <form ref={formRef} className="work-form" onSubmit={handleSubmit} onClick={(e) => e.stopPropagation()}>
         <h2 id="form-title" className="form-title">
           {isEditing ? "Edit Work" : "Add Work"}
         </h2>
@@ -149,8 +164,28 @@ export function WorkForm({ work, onSubmit, onCancel }: WorkFormProps) {
             type="url"
             value={thumbnailUrl}
             onChange={(e) => setThumbnailUrl(e.target.value)}
+            onBlur={() => {
+            if (!thumbnailUrl.trim()) {
+              setErrors((prev) => {
+                const { thumbnailUrl: _, ...rest } = prev;
+                return rest;
+              });
+            } else {
+              setErrors((prev) => ({
+                ...prev,
+                thumbnailUrl: isValidUrl(thumbnailUrl) ? "" : "Please enter a valid URL",
+              }));
+            }
+          }}
             placeholder="https://..."
+            aria-invalid={!!errors.thumbnailUrl}
+            aria-describedby={errors.thumbnailUrl ? "thumb-error" : undefined}
           />
+          {errors.thumbnailUrl && (
+            <span id="thumb-error" className="form-error" role="alert">
+              {errors.thumbnailUrl}
+            </span>
+          )}
         </div>
 
         <div className="form-actions">

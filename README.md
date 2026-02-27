@@ -5,6 +5,8 @@ A personal hub to store and organize your creative works with links to Google Dr
 ## Features
 
 - Add creative works with title, type, description, and Google Drive URL
+- **Bulk add** – paste a list (e.g. `Title | Type | Drive URL` or URLs, one per line)
+- **Export / Import** – backup to JSON or restore from a previous export
 - Filter by type (Writing, Music, Art, Video, Design, Other)
 - Edit and delete works
 - Data persists in your browser (LocalStorage)

@@ -49,6 +49,31 @@ export function deleteWork(id: string): boolean {
   return true;
 }
 
+export function restoreWork(work: CreativeWork): CreativeWork {
+  const works = loadWorks();
+  works.push(work);
+  saveWorks(works);
+  return work;
+}
+
 export function getWorkById(id: string): CreativeWork | null {
   return loadWorks().find((w) => w.id === id) ?? null;
+}
+
+export function addManyWorks(
+  items: Omit<CreativeWork, "id" | "createdAt">[]
+): CreativeWork[] {
+  const works = loadWorks();
+  const newWorks: CreativeWork[] = items.map((item) => ({
+    ...item,
+    id: crypto.randomUUID(),
+    createdAt: new Date().toISOString(),
+  }));
+  works.push(...newWorks);
+  saveWorks(works);
+  return newWorks;
+}
+
+export function replaceAllWorks(works: CreativeWork[]): void {
+  saveWorks(works);
 }

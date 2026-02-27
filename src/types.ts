@@ -4,6 +4,7 @@ export type WorkType =
   | "Art"
   | "Video"
   | "Design"
+  | "Website"
   | "Other";
 
 export interface CreativeWork {
@@ -16,11 +17,15 @@ export interface CreativeWork {
   createdAt: string;
 }
 
+export type SortOption = "newest" | "oldest" | "title-az" | "title-za";
+export type ViewMode = "grid" | "list";
+
 export const WORK_TYPES: WorkType[] = [
   "Writing",
   "Music",
   "Art",
   "Video",
   "Design",
+  "Website",
   "Other",
 ];

@@ -1,12 +1,25 @@
-import type { CreativeWork } from "../types";
+import type { CreativeWork, ViewMode } from "../types";
 
 interface WorkCardProps {
   work: CreativeWork;
+  viewMode?: ViewMode;
   onEdit: (work: CreativeWork) => void;
   onDelete: (work: CreativeWork) => void;
 }
 
-export function WorkCard({ work, onEdit, onDelete }: WorkCardProps) {
+function formatRelativeDate(iso: string): string {
+  const d = new Date(iso);
+  const now = new Date();
+  const diff = now.getTime() - d.getTime();
+  const days = Math.floor(diff / (24 * 60 * 60 * 1000));
+  if (days === 0) return "Today";
+  if (days === 1) return "Yesterday";
+  if (days < 7) return `${days} days ago`;
+  if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
+  return d.toLocaleDateString(undefined, { month: "short", year: "numeric" });
+}
+
+export function WorkCard({ work, viewMode = "grid", onEdit, onDelete }: WorkCardProps) {
   const handleOpenDrive = () => {
     window.open(work.driveUrl, "_blank", "noopener,noreferrer");
   };
@@ -22,7 +35,7 @@ export function WorkCard({ work, onEdit, onDelete }: WorkCardProps) {
   };
 
   return (
-    <article className="work-card" data-type={work.type}>
+    <article className={`work-card work-card-${viewMode}`} data-type={work.type}>
       {work.thumbnailUrl ? (
         <div className="work-card-thumb" style={{ backgroundImage: `url(${work.thumbnailUrl})` }} />
       ) : (
@@ -32,6 +45,7 @@ export function WorkCard({ work, onEdit, onDelete }: WorkCardProps) {
       )}
       <div className="work-card-body">
         <h2 className="work-card-title">{work.title}</h2>
+        <span className="work-card-meta">{formatRelativeDate(work.createdAt)} · {work.type}</span>
         {work.description && (
           <p className="work-card-desc">{work.description}</p>
         )}
