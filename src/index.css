@@ -1,39 +1,39 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap");
 
 :root {
   --font-display: "DM Serif Display", Georgia, serif;
-  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 
-  --bg: #0f0e0d;
-  --surface: #1a1816;
-  --surface-hover: #242120;
-  --border: #2d2a28;
-  --text-primary: #f5f3f0;
-  --text-secondary: #c4bfb8;
-  --text-muted: #8c8780;
-  --accent: #e07c4c;
-  --accent-hover: #e89268;
-  --accent-alpha: rgba(224, 124, 76, 0.35);
-  --danger: #e05c4c;
-  --shadow: rgba(0, 0, 0, 0.4);
-  --overlay: rgba(15, 14, 13, 0.85);
+  --bg: #0b1020;
+  --surface: #11182d;
+  --surface-hover: #1a2340;
+  --border: #2a3558;
+  --text-primary: #f7f9ff;
+  --text-secondary: #d4dbf3;
+  --text-muted: #9aa7ce;
+  --accent: #6f7bff;
+  --accent-hover: #8791ff;
+  --accent-alpha: rgba(111, 123, 255, 0.34);
+  --danger: #ff6b87;
+  --shadow: rgba(3, 7, 18, 0.45);
+  --overlay: rgba(7, 10, 19, 0.76);
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --bg: #faf8f5;
+    --bg: #f4f7ff;
     --surface: #ffffff;
-    --surface-hover: #f5f3f0;
-    --border: #e5e2dd;
-    --text-primary: #1a1816;
-    --text-secondary: #4a4642;
-    --text-muted: #7a7570;
-    --accent: #c95a2a;
-    --accent-hover: #b34d22;
-    --accent-alpha: rgba(201, 90, 42, 0.25);
-    --danger: #c94a3a;
-    --shadow: rgba(26, 24, 22, 0.08);
-    --overlay: rgba(250, 248, 245, 0.9);
+    --surface-hover: #eef2ff;
+    --border: #d8e0fa;
+    --text-primary: #111836;
+    --text-secondary: #30406f;
+    --text-muted: #5f6f9f;
+    --accent: #4656f4;
+    --accent-hover: #3947d0;
+    --accent-alpha: rgba(70, 86, 244, 0.28);
+    --danger: #e03a68;
+    --shadow: rgba(26, 40, 92, 0.14);
+    --overlay: rgba(245, 248, 255, 0.8);
   }
 }
 
@@ -51,17 +51,23 @@ html {
 
 body {
   margin: 0;
-  font-family: var(--font-sans);
-  background: var(--bg);
-  color: var(--text-primary);
-  line-height: 1.5;
   min-height: 100vh;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background:
+    radial-gradient(90vw 90vw at 110% -10%, rgba(101, 119, 255, 0.2), transparent 60%),
+    radial-gradient(70vw 70vw at -10% 120%, rgba(80, 141, 255, 0.14), transparent 60%),
+    var(--bg);
+  line-height: 1.5;
 }
 
 #root {
   min-height: 100vh;
 }
 
-button {
-  font-family: inherit;
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
