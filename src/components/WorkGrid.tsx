@@ -76,6 +76,10 @@ export function WorkGrid({
         {filteredSorted.length} {filteredSorted.length === 1 ? "work" : "works"} displayed
       </div>
       <div className="work-toolbar">
+        <div className="work-toolbar-top">
+          <p className="work-toolbar-title">Discover and manage your featured work</p>
+          <p className="work-toolbar-meta">{filteredSorted.length} shown · {works.length} total</p>
+        </div>
         <div className="search-sort-row">
           <div className="search-wrap">
             <label htmlFor="work-search" className="visually-hidden">

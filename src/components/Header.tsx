@@ -17,9 +17,10 @@ export function Header({
 }: HeaderProps) {
   return (
     <header className="header">
+      <span className="header-kicker">Portfolio Command Center</span>
       <h1 className="header-title">Creative Hub</h1>
       <p className="header-subtitle">
-        Your creative works, linked to Google Drive
+        Curate, search, and present your best work with an editorial-quality portfolio flow.
         {worksCount > 0 && (
           <span className="header-count">
             · {worksCount} work{worksCount !== 1 ? "s" : ""}
