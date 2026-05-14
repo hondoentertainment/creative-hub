@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { WorkType } from "../types";
 import { parseBulkInput } from "../utils/bulkParse";
 import { useFocusTrap } from "../hooks/useFocusTrap";
@@ -15,14 +15,9 @@ const FORMAT_HINT = `One entry per line. Formats:
 
 export function BulkLoadModal({ onImport, onCancel }: BulkLoadModalProps) {
   const [input, setInput] = useState("");
-  const [result, setResult] = useState<ReturnType<typeof parseBulkInput> | null>(null);
-
-  useEffect(() => {
-    if (!input.trim()) {
-      setResult(null);
-      return;
-    }
-    setResult(parseBulkInput(input));
+  const result = useMemo(() => {
+    if (!input.trim()) return null;
+    return parseBulkInput(input);
   }, [input]);
 
   useEffect(() => {

@@ -19,24 +19,14 @@ function isValidUrl(s: string): boolean {
 }
 
 export function WorkForm({ work, onSubmit, onCancel }: WorkFormProps) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [type, setType] = useState<WorkType>("Other");
-  const [driveUrl, setDriveUrl] = useState("");
-  const [thumbnailUrl, setThumbnailUrl] = useState("");
+  const [title, setTitle] = useState(work?.title ?? "");
+  const [description, setDescription] = useState(work?.description ?? "");
+  const [type, setType] = useState<WorkType>(work?.type ?? "Other");
+  const [driveUrl, setDriveUrl] = useState(work?.driveUrl ?? "");
+  const [thumbnailUrl, setThumbnailUrl] = useState(work?.thumbnailUrl ?? "");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const isEditing = !!work;
-
-  useEffect(() => {
-    if (work) {
-      setTitle(work.title);
-      setDescription(work.description ?? "");
-      setType(work.type);
-      setDriveUrl(work.driveUrl);
-      setThumbnailUrl(work.thumbnailUrl ?? "");
-    }
-  }, [work]);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -167,7 +157,7 @@ export function WorkForm({ work, onSubmit, onCancel }: WorkFormProps) {
             onBlur={() => {
             if (!thumbnailUrl.trim()) {
               setErrors((prev) => {
-                const { thumbnailUrl: _, ...rest } = prev;
+                const { thumbnailUrl: _unused, ...rest } = prev;
                 return rest;
               });
             } else {

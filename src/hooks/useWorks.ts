@@ -1,17 +1,13 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import type { CreativeWork } from "../types";
 import * as store from "../store";
 
 export function useWorks() {
-  const [works, setWorks] = useState<CreativeWork[]>([]);
+  const [works, setWorks] = useState<CreativeWork[]>(() => store.getAllWorks());
 
   const refresh = useCallback(() => {
     setWorks(store.getAllWorks());
   }, []);
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
 
   const add = useCallback(
     (work: Omit<CreativeWork, "id" | "createdAt">) => {
