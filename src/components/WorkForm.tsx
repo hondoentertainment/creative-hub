@@ -157,6 +157,7 @@ export function WorkForm({ work, onSubmit, onCancel }: WorkFormProps) {
             onBlur={() => {
             if (!thumbnailUrl.trim()) {
               setErrors((prev) => {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { thumbnailUrl: _unused, ...rest } = prev;
                 return rest;
               });
