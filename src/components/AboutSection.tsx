@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { AboutData } from "../store/aboutStore";
 import { getAbout, saveAbout } from "../store/aboutStore";
 import { useFocusTrap } from "../hooks/useFocusTrap";
@@ -8,17 +8,14 @@ interface AboutSectionProps {
 }
 
 export function AboutSection({ isPublicView }: AboutSectionProps) {
-  const [about, setAbout] = useState<AboutData>({});
+  const [about, setAbout] = useState<AboutData>(() => getAbout());
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<AboutData>({});
 
-  useEffect(() => {
-    setAbout(getAbout());
-  }, []);
-
-  useEffect(() => {
-    if (isEditing) setDraft({ ...about });
-  }, [isEditing, about]);
+  const startEditing = () => {
+    setDraft({ ...about });
+    setIsEditing(true);
+  };
 
   const handleSave = () => {
     saveAbout(draft);
@@ -42,7 +39,7 @@ export function AboutSection({ isPublicView }: AboutSectionProps) {
         <button
           type="button"
           className="about-add-btn"
-          onClick={() => setIsEditing(true)}
+          onClick={startEditing}
           aria-label="Add profile"
         >
           + Add your profile
@@ -193,7 +190,7 @@ export function AboutSection({ isPublicView }: AboutSectionProps) {
             <button
               type="button"
               className="about-edit-btn"
-              onClick={() => setIsEditing(true)}
+              onClick={startEditing}
               aria-label="Edit profile"
             >
               Edit profile

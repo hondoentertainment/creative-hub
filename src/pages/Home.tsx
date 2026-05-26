@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import type { CreativeWork, WorkType, SortOption, ViewMode } from "../types";
 import { useWorks } from "../hooks/useWorks";
 import { Header } from "../components/Header";
@@ -40,12 +40,10 @@ export function Home() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [collectionsOpen, setCollectionsOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isPublicView, setIsPublicView] = useState(false);
-
-  useEffect(() => {
+  const [isPublicView] = useState(() => {
     const params = new URLSearchParams(window.location.search);
-    setIsPublicView(params.has("public") || params.has("share"));
-  }, []);
+    return params.has("public") || params.has("share");
+  });
 
   const handleAddClick = () => {
     setEditingWork(null);
@@ -238,6 +236,7 @@ export function Home() {
 
       {formOpen && (
         <WorkForm
+          key={editingWork?.id ?? "new"}
           work={editingWork}
           collections={collections}
           onSubmit={handleFormSubmit}

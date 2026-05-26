@@ -16,7 +16,6 @@ export function useWorks() {
 
   useEffect(() => {
     const local = store.getAllWorks();
-    setWorks(local);
     if (isFirebaseConfigured()) {
       initFirebaseSync(local, (merged) => {
         store.replaceAllWorks(merged);

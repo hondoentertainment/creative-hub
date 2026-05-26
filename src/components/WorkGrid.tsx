@@ -90,7 +90,7 @@ export function WorkGrid({
       );
     }
     return sortWorks(list, sort);
-  }, [works, filter, debouncedSearch, sort]);
+  }, [works, filter, debouncedSearch, sort, collections]);
 
   const counts = useMemo(() => {
     const byType: Record<string, number> = {};

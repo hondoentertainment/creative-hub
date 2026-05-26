@@ -20,6 +20,14 @@ function isValidUrl(s: string): boolean {
   }
 }
 
+function collectionIdsForWork(
+  work: CreativeWork | null | undefined,
+  collections: { id: string; workIds: string[] }[]
+): string[] {
+  if (!work) return [];
+  return collections.filter((c) => c.workIds.includes(work.id)).map((c) => c.id);
+}
+
 export function WorkForm({
   work,
   collections = [],
@@ -27,35 +35,21 @@ export function WorkForm({
   onCancel,
   onCollectionChange,
 }: WorkFormProps) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [type, setType] = useState<WorkType>("Other");
-  const [driveUrl, setDriveUrl] = useState("");
-  const [links, setLinks] = useState<WorkLink[]>([]);
-  const [thumbnailUrl, setThumbnailUrl] = useState("");
-  const [featured, setFeatured] = useState(false);
-  const [tags, setTags] = useState<string[]>([]);
+  const [title, setTitle] = useState(work?.title ?? "");
+  const [description, setDescription] = useState(work?.description ?? "");
+  const [type, setType] = useState<WorkType>(work?.type ?? "Other");
+  const [driveUrl, setDriveUrl] = useState(work?.driveUrl ?? "");
+  const [links, setLinks] = useState<WorkLink[]>(work?.links ?? []);
+  const [thumbnailUrl, setThumbnailUrl] = useState(work?.thumbnailUrl ?? "");
+  const [featured, setFeatured] = useState(work?.featured ?? false);
+  const [tags, setTags] = useState<string[]>(work?.tags ?? []);
   const [tagInput, setTagInput] = useState("");
-  const [collectionIds, setCollectionIds] = useState<string[]>([]);
+  const [collectionIds, setCollectionIds] = useState<string[]>(() =>
+    collectionIdsForWork(work, collections)
+  );
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const isEditing = !!work;
-
-  useEffect(() => {
-    if (work) {
-      setTitle(work.title);
-      setDescription(work.description ?? "");
-      setType(work.type);
-      setDriveUrl(work.driveUrl);
-      setLinks(work.links ?? []);
-      setThumbnailUrl(work.thumbnailUrl ?? "");
-      setFeatured(work.featured ?? false);
-      setTags(work.tags ?? []);
-      setCollectionIds(
-        collections.filter((c) => c.workIds.includes(work.id)).map((c) => c.id)
-      );
-    }
-  }, [work, collections]);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -299,8 +293,9 @@ export function WorkForm({
             onBlur={() => {
             if (!thumbnailUrl.trim()) {
               setErrors((prev) => {
-                const { thumbnailUrl: _unused, ...rest } = prev;
-                return rest;
+                const next = { ...prev };
+                delete next.thumbnailUrl;
+                return next;
               });
             } else {
               setErrors((prev) => ({

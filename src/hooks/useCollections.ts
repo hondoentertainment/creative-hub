@@ -1,17 +1,15 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import type { Collection } from "../types";
 import * as collectionStore from "../store/collectionStore";
 
 export function useCollections() {
-  const [collections, setCollections] = useState<Collection[]>([]);
+  const [collections, setCollections] = useState<Collection[]>(() =>
+    collectionStore.getAllCollections()
+  );
 
   const refresh = useCallback(() => {
     setCollections(collectionStore.getAllCollections());
   }, []);
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
 
   const add = useCallback((name: string) => {
     const created = collectionStore.addCollection(name);

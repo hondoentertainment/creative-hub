@@ -121,7 +121,8 @@ function mergeWorks(local: CreativeWork[], remote: (CreativeWork & { updatedAt?:
     const rUpdated = r.updatedAt ? new Date(r.updatedAt).getTime() : 0;
     const lUpdated = existing?.createdAt ? new Date(existing.createdAt).getTime() : 0;
     if (!existing || rUpdated >= lUpdated) {
-      const { updatedAt, ...work } = r;
+      const { updatedAt: _remoteUpdatedAt, ...work } = r;
+      void _remoteUpdatedAt;
       byId.set(r.id, work);
     }
   });
