@@ -61,7 +61,7 @@ export function parseImportFile(raw: string): CreativeWork[] | { error: string }
       });
     }
     return valid;
-  } catch (e) {
+  } catch {
     return { error: "Invalid JSON file" };
   }
 }

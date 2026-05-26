@@ -41,6 +41,7 @@ export function Header({
 
   return (
     <header className="header">
+      <span className="header-kicker">Portfolio Command Center</span>
       <h1 className="header-title">Creative Hub</h1>
       <p className="header-subtitle">
         {isPublicView ? "Creative works portfolio" : "Your creative works, linked to Google Drive"}

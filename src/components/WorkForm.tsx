@@ -299,7 +299,7 @@ export function WorkForm({
             onBlur={() => {
             if (!thumbnailUrl.trim()) {
               setErrors((prev) => {
-                const { thumbnailUrl: _, ...rest } = prev;
+                const { thumbnailUrl: _unused, ...rest } = prev;
                 return rest;
               });
             } else {

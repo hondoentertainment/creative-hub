@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import type { CreativeWork } from "../types";
 import * as store from "../store";
 import {
@@ -8,7 +8,7 @@ import {
 } from "../lib/firebaseSync";
 
 export function useWorks() {
-  const [works, setWorks] = useState<CreativeWork[]>([]);
+  const [works, setWorks] = useState<CreativeWork[]>(() => store.getAllWorks());
 
   const refresh = useCallback(() => {
     setWorks(store.getAllWorks());
