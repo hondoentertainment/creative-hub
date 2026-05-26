@@ -1,29 +1,51 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import type { CreativeWork, WorkType, SortOption, ViewMode } from "../types";
 import { useWorks } from "../hooks/useWorks";
 import { Header } from "../components/Header";
 import { WorkGrid } from "../components/WorkGrid";
 import { WorkForm } from "../components/WorkForm";
+import { WorkDetailModal } from "../components/WorkDetailModal";
 import { BulkLoadModal } from "../components/BulkLoadModal";
 import { ImportModal } from "../components/ImportModal";
 import { ConfirmModal } from "../components/ConfirmModal";
 import { Toast } from "../components/Toast";
+import { AboutSection } from "../components/AboutSection";
+import { CollectionModal } from "../components/CollectionModal";
+import { useCollections } from "../hooks/useCollections";
 import { exportToJson, parseImportFile } from "../utils/exportImport";
 
 export function Home() {
-  const { works, add, addMany, update, remove, restore, replaceAll } = useWorks();
-  const [filter, setFilter] = useState<WorkType | "All">("All");
+  const { works, add, addMany, update, remove, restore, replaceAll, reorder } = useWorks();
+  const {
+    collections,
+    add: addCollection,
+    update: updateCollection,
+    remove: removeCollection,
+    addWork: addWorkToCollection,
+    removeWork: removeWorkFromCollection,
+  } = useCollections();
+  const [filter, setFilter] = useState<
+    WorkType | "All" | "Featured" | `tag:${string}` | `collection:${string}`
+  >("All");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortOption>("newest");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [formOpen, setFormOpen] = useState(false);
   const [editingWork, setEditingWork] = useState<CreativeWork | null>(null);
+  const [detailWork, setDetailWork] = useState<CreativeWork | null>(null);
   const [bulkOpen, setBulkOpen] = useState(false);
   const [importWorks, setImportWorks] = useState<CreativeWork[] | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<CreativeWork | null>(null);
   const [deletedForToast, setDeletedForToast] = useState<CreativeWork | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [collectionsOpen, setCollectionsOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isPublicView, setIsPublicView] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setIsPublicView(params.has("public") || params.has("share"));
+  }, []);
 
   const handleAddClick = () => {
     setEditingWork(null);
@@ -110,12 +132,15 @@ export function Home() {
   };
 
   const handleImportMerge = (newWorks: CreativeWork[]) => {
-    addMany(newWorks.map(({ title, type, driveUrl, description, thumbnailUrl }) => ({
+    addMany(newWorks.map(({ title, type, driveUrl, description, thumbnailUrl, links, featured, tags }) => ({
       title,
       type,
       driveUrl,
       description,
       thumbnailUrl,
+      links,
+      featured,
+      tags,
     })));
     setImportWorks(null);
   };
@@ -149,12 +174,16 @@ export function Home() {
       <main id="main-content" className="app" tabIndex={-1}>
       <Header
         worksCount={works.length}
+        isPublicView={isPublicView}
+        onCollectionsClick={() => setCollectionsOpen(true)}
         onAddClick={handleAddClick}
         onBulkAddClick={() => setBulkOpen(true)}
         onExportClick={handleExport}
         onImportClick={handleImportClick}
         onLoadSeedClick={handleLoadSeed}
       />
+
+      <AboutSection isPublicView={isPublicView} />
 
       <input
         ref={fileInputRef}
@@ -167,6 +196,8 @@ export function Home() {
 
       <WorkGrid
         works={works}
+        collections={collections}
+        isPublicView={isPublicView}
         filter={filter}
         onFilterChange={setFilter}
         search={search}
@@ -175,15 +206,48 @@ export function Home() {
         onSortChange={setSort}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
+        onSelect={setDetailWork}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onReorder={reorder}
       />
+
+      {detailWork && (
+        <WorkDetailModal
+          work={detailWork}
+          isPublicView={isPublicView}
+          onClose={() => setDetailWork(null)}
+          onEdit={(w) => {
+            setDetailWork(null);
+            setEditingWork(w);
+            setFormOpen(true);
+          }}
+          onOpenUrl={(url) => window.open(url, "_blank", "noopener,noreferrer")}
+        />
+      )}
+
+      {collectionsOpen && (
+        <CollectionModal
+          collections={collections}
+          onAdd={(name) => addCollection(name)}
+          onRename={(id, name) => updateCollection(id, { name })}
+          onDelete={(id) => removeCollection(id)}
+          onClose={() => setCollectionsOpen(false)}
+        />
+      )}
 
       {formOpen && (
         <WorkForm
           work={editingWork}
+          collections={collections}
           onSubmit={handleFormSubmit}
           onCancel={handleFormCancel}
+          onCollectionChange={(workId, colId, add) => {
+            if (workId) {
+              if (add) addWorkToCollection(colId, workId);
+              else removeWorkFromCollection(colId, workId);
+            }
+          }}
         />
       )}
 

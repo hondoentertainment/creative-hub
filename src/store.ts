@@ -6,7 +6,15 @@ function loadWorks(): CreativeWork[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw) as CreativeWork[];
+    const needsOrder = parsed.some((w) => w.order == null);
+    if (needsOrder) {
+      parsed.forEach((w, i) => {
+        if (w.order == null) w.order = i;
+      });
+      saveWorks(parsed);
+    }
+    return parsed;
   } catch {
     return [];
   }
@@ -22,9 +30,11 @@ export function getAllWorks(): CreativeWork[] {
 
 export function addWork(work: Omit<CreativeWork, "id" | "createdAt">): CreativeWork {
   const works = loadWorks();
+  const maxOrder = works.reduce((m, w) => Math.max(m, w.order ?? -Infinity), -Infinity);
   const newWork: CreativeWork = {
     ...work,
     id: crypto.randomUUID(),
+    order: (work.order ?? maxOrder + 1),
     createdAt: new Date().toISOString(),
   };
   works.push(newWork);
@@ -64,14 +74,28 @@ export function addManyWorks(
   items: Omit<CreativeWork, "id" | "createdAt">[]
 ): CreativeWork[] {
   const works = loadWorks();
+  let nextOrder = works.reduce((m, w) => Math.max(m, w.order ?? -Infinity), -Infinity) + 1;
   const newWorks: CreativeWork[] = items.map((item) => ({
     ...item,
     id: crypto.randomUUID(),
+    order: item.order ?? nextOrder++,
     createdAt: new Date().toISOString(),
   }));
   works.push(...newWorks);
   saveWorks(works);
   return newWorks;
+}
+
+export function reorderWorks(workIds: string[]): void {
+  const works = loadWorks();
+  const byId = new Map(works.map((w) => [w.id, w]));
+  const reordered = workIds
+    .map((id) => byId.get(id))
+    .filter((w): w is CreativeWork => w != null);
+  reordered.forEach((w, i) => {
+    w.order = i;
+  });
+  saveWorks(works);
 }
 
 export function replaceAllWorks(works: CreativeWork[]): void {
